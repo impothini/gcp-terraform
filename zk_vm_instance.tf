@@ -11,9 +11,9 @@ resource "google_compute_instance" "zk_instance" {
   name         = "${var.zk_information.prefix}-${count.index + 1}"
   machine_type = var.zk_information.machine_type
 
-#  attached_disk {
-#    source = "${var.zk_information.prefix}-disk-${count.index + 1}"
-#  }
+  #  attached_disk {
+  #    source = "${var.zk_information.prefix}-disk-${count.index + 1}"
+  #  }
 
   zone = var.zk_information.zones[count.index % length(var.zk_information.zones)]
 
@@ -39,7 +39,7 @@ resource "google_compute_attached_disk" "zk-data-diskattach" {
   count    = var.zk_information.count
   disk     = "${var.zk_information.prefix}-disk-${count.index + 1}"
   instance = "${var.zk_information.prefix}-${count.index + 1}"
-  zone  = var.zk_information.zones[count.index % length(var.zk_information.zones)]
+  zone     = var.zk_information.zones[count.index % length(var.zk_information.zones)]
 
   depends_on = [google_compute_instance.zk_instance, google_compute_disk.zk_disk]
 

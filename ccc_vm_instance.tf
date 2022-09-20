@@ -37,7 +37,7 @@ resource "google_compute_attached_disk" "ccc-data-diskattach" {
   count    = var.ccc_information.count
   disk     = "${var.ccc_information.prefix}-disk-${count.index + 1}"
   instance = "${var.ccc_information.prefix}-${count.index + 1}"
-  zone  = var.ccc_information.zones[count.index % length(var.ccc_information.zones)]
+  zone     = var.ccc_information.zones[count.index % length(var.ccc_information.zones)]
 
   depends_on = [google_compute_instance.ccc_instance, google_compute_disk.ccc_disk]
 }

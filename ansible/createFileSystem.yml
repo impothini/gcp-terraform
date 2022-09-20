@@ -1,0 +1,42 @@
+- hosts: all
+  gather_facts: false
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+    - name: set disk label to GPT
+      shell: "parted /dev/sdb mklabel gpt"
+
+    - name: create filessystem
+      shell: "parted /dev/sdb mkpart sdb-kafka xfs 0.0GB 100% set 1 lvm on"
+
+    - name: create physical volume
+      shell: "pvcreate /dev/sdb1"
+
+    - name: create volume group
+      shell: "vgcreate VG01 /dev/sdb1"
+
+    - name: create logical volume kafka
+      shell: "lvcreate -l +100%FREE -n kafka /dev/mapper/VG01"
+
+    - name: create XFS kafka
+      shell: "mkfs.xfs /dev/mapper/VG01-kafka"
+
+    - name: create directory if it does not exist
+      file:
+        path: /kafka
+        state: directory
+        made: '0755'
+
+    - name: Mount kafka
+      shell: "mount  /dev/mapper/VG01-kafka /kafka"
+
+    - name: Add in fstab amex
+      lineinfile:
+        path: /etc/fstab
+        backup: yes
+        line: '/dev/mapper/VG01-kafka       /kafka                         xfs     defaults,noatime 0 0'
+      register: fstab
+
+    - name: check before reboot
+      shell: "mount -av | grep reboot"

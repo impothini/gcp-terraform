@@ -19,6 +19,10 @@ variable "vpc_network_name" {
   type = string
 }
 
+variable "ssh_pub_key" {
+  type = string
+}
+
 variable "broker_information" {
   type = object({
     prefix       = string
